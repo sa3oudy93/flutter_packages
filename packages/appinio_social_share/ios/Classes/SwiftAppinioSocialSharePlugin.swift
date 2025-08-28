@@ -15,13 +15,12 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
     private let FACEBOOK_STORIES = "facebook_stories";
     private let MESSENGER = "messenger";
     private let WHATSAPP:String = "whatsapp";
+    private let WHATSAPP_IMG_IOS:String = "whatsapp_img_ios";
     private let TWITTER:String = "twitter";
     private let SMS:String = "sms";
     private let SYSTEM_SHARE:String = "system_share";
     private let COPY_TO_CLIPBOARD:String = "copy_to_clipboard";
     private let TELEGRAM:String = "telegram";
-    private let TIKTOK_POST:String = "tiktok_post";
-    private let TIKTOK_STATUS:String = "tiktok_status";
     private let INSTALLED_APPS:String = "installed_apps";
 
 
@@ -42,12 +41,6 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
       let args = call.arguments as? [String: Any?]
 
       switch (call.method) {
-      case TIKTOK_STATUS:
-          result(shareUtil.NOT_IMPLEMENTED)
-          break
-      case TIKTOK_POST:
-          result(shareUtil.NOT_IMPLEMENTED)
-          break
       case INSTALLED_APPS:
           shareUtil.getInstalledApps(result: result)
           break
@@ -62,6 +55,9 @@ public class SwiftAppinioSocialSharePlugin: NSObject, FlutterPlugin, SharingDele
           break
       case FACEBOOK_STORIES:
           shareUtil.shareToFacebookStory(args:args!,result:result)
+          break
+      case WHATSAPP_IMG_IOS:
+          shareUtil.shareImageToWhatsApp(args:args!, result:result,delegate: self)
           break
       case WHATSAPP:
           shareUtil.shareToWhatsApp(args:args!, result:result)

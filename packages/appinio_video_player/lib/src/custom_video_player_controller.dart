@@ -3,27 +3,41 @@ import 'package:appinio_video_player/src/fullscreen_video_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:appinio_video_player/src/models/custom_video_player_settings.dart';
 
 /// The extension on the class is able to call private methods
 /// only the package can use these methods and not the public beacuse of the hide keyword in the package exports
 extension ProtectedCustomVideoPlayerController on CustomVideoPlayerController {
   Future<void> Function(String) get switchVideoSource => _switchVideoSource;
+
   ValueNotifier<Duration> get videoProgressNotifier => _videoProgressNotifier;
+
   ValueNotifier<double> get playbackSpeedNotifier => _playbackSpeedNotifier;
+
   ValueNotifier<bool> get isPlayingNotifier => _isPlayingNotifier;
+
   bool get isFullscreen => _isFullscreen;
+
   set updateViewAfterFullscreen(Function updateViewAfterFullscreen) =>
       _updateViewAfterFullscreen = updateViewAfterFullscreen;
 }
 
 class CustomVideoPlayerController {
+  double _lastVolume = 0.5;
+
+  Duration get getPosition => videoPlayerController.value.position;
   final BuildContext context;
-  VideoPlayerController videoPlayerController;
+  CachedVideoPlayerController videoPlayerController;
   final CustomVideoPlayerSettings customVideoPlayerSettings;
-  final Map<String, VideoPlayerController>? additionalVideoSources;
+  final Map<String, CachedVideoPlayerController>? additionalVideoSources;
   final ValueNotifier<bool> areControlsVisible = ValueNotifier<bool>(true);
+
+  Future<void> switchSource(String sourceKey) async {
+    assert(additionalVideoSources != null &&
+        additionalVideoSources!.containsKey(sourceKey));
+    switchVideoSource(sourceKey);
+  }
 
   CustomVideoPlayerController({
     required this.context,
@@ -80,7 +94,9 @@ class CustomVideoPlayerController {
     _setOrientationForVideo();
     SystemChrome.setEnabledSystemUIMode(
         customVideoPlayerSettings.systemUIModeInsideFullscreen);
-    await Navigator.of(context).push(route);
+    if(context.mounted){
+      await Navigator.of(context).push(route);
+    }
   }
 
   Future<void> _exitFullscreen() async {
@@ -92,7 +108,9 @@ class CustomVideoPlayerController {
     await SystemChrome.setPreferredOrientations(customVideoPlayerSettings
         .deviceOrientationsAfterFullscreen); // reset device orientation values
     _isFullscreen = false;
-    Navigator.of(context).pop();
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   void _setOrientationForVideo() {
@@ -124,7 +142,8 @@ class CustomVideoPlayerController {
   }
 
   Future<void> _switchVideoSource(String selectedSource) async {
-    VideoPlayerController? newSource = additionalVideoSources![selectedSource];
+    CachedVideoPlayerController? newSource =
+        additionalVideoSources![selectedSource];
     if (newSource != null) {
       Duration _playedDuration = videoPlayerController.value.position;
       double _playbackSpeed = videoPlayerController.value.playbackSpeed;
@@ -236,11 +255,20 @@ class CustomVideoPlayerController {
     videoPlayerController.dispose();
     if (additionalVideoSources != null) {
       if (additionalVideoSources!.isNotEmpty) {
-        for (MapEntry<String, VideoPlayerController> videoSource
+        for (MapEntry<String, CachedVideoPlayerController> videoSource
             in additionalVideoSources!.entries) {
           videoSource.value.dispose();
         }
       }
     }
+  }
+
+  void mute() {
+    _lastVolume = videoPlayerController.value.volume;
+    videoPlayerController.setVolume(0);
+  }
+
+  void unMute() {
+    videoPlayerController.setVolume(_lastVolume);
   }
 }

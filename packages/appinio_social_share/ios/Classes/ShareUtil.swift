@@ -2,13 +2,12 @@ import Photos
 import FBSDKCoreKit
 import FBSDKShareKit
 import Social
-import TikTokOpenSDK
 import MobileCoreServices
 
 
 
 public class ShareUtil{
-    
+
     public let SUCCESS: String = "SUCCESS"
     public let ERROR_APP_NOT_AVAILABLE: String = "ERROR_APP_NOT_AVAILABLE"
     public let ERROR_FEATURE_NOT_AVAILABLE_FOR_THIS_VERSON: String = "ERROR_FEATURE_NOT_AVAILABLE_FOR_THIS_VERSON"
@@ -16,6 +15,7 @@ public class ShareUtil{
     public let NOT_IMPLEMENTED: String = "NOT_IMPLEMENTED"
 
     let argAttributionURL: String  = "attributionURL";
+    let argImagePaths: String  = "imagePaths";
     let argImagePath: String  = "imagePath";
     let argbackgroundImage: String  = "backgroundImage";
     let argMessage: String  = "message";
@@ -30,7 +30,7 @@ public class ShareUtil{
 
     
     public func getInstalledApps(result: @escaping FlutterResult){
-        let apps = [["instagram","instagram"],["facebook-stories","facebook_stories"],["whatsapp","whatsapp"],["tg","telegram"],["fb-messenger","messenger"],["tiktok","tiktok"],["instagram-stories","instagram_stories"],["twitter","twitter"],["sms","message"]]
+        let apps = [["instagram","instagram"],["facebook-stories","facebook_stories"],["whatsapp","whatsapp"],["tg","telegram"],["fb-messenger","messenger"],["tiktok","snssdk1233"],["instagram-stories","instagram_stories"],["twitter","twitter"],["sms","message"]]
         var output:[String: Bool] = [:]
         for app in apps {
             if(UIApplication.shared.canOpenURL(URL(string:(app[0])+"://")!)){
@@ -71,36 +71,6 @@ public class ShareUtil{
             return true
         }
         return false
-    }
-
-
-
-    public func shareToTiktok(args : [String: Any?],result: @escaping FlutterResult){
-        let images = args[argImages] as? [String]
-        let videoFile = args[argVideoFile] as? String
-
-
-        let request = TikTokOpenSDKShareRequest()
-
-        request.mediaType = images == nil ? TikTokOpenSDKShareMediaType.video : TikTokOpenSDKShareMediaType.image
-        var mediaLocalIdentifiers: [String] = []
-
-
-        if(videoFile==nil){
-            mediaLocalIdentifiers.append(contentsOf: images!)
-        }else{
-            mediaLocalIdentifiers.append(videoFile!)
-        }
-
-              request.localIdentifiers = mediaLocalIdentifiers
-              DispatchQueue.main.async {
-                let a = request.send(completionBlock: { response in
-                  print("Response from TikTok")
-                  print(response.errCode.rawValue)
-                  print(response.shareState.rawValue)
-                })
-              }
-        result(SUCCESS)
     }
 
 
@@ -280,10 +250,12 @@ public class ShareUtil{
 
     public func shareToSystem(args : [String: Any?],result: @escaping FlutterResult) {
         let text = args[argMessage] as? String
-        let filePath = args[argImagePath] as? String
+        let filePaths = args[argImagePaths] as? [String]
         var data : [Any] = [text!];
-        if(!(filePath == nil)){
-            data.append(URL(fileURLWithPath: filePath!))
+        if filePaths != nil{
+            for filePath in filePaths!{
+                data.append(URL(fileURLWithPath: filePath))
+            }
         }
         let activityViewController = UIActivityViewController(activityItems: data, applicationActivities: nil)
         UIApplication.topViewController()?.present(activityViewController, animated: true, completion: nil)
@@ -308,7 +280,7 @@ public class ShareUtil{
         let whatsAppURL  = NSURL(string: whatsURL.addingPercentEncoding(withAllowedCharacters: characterSet)!)
         if UIApplication.shared.canOpenURL(whatsAppURL! as URL)
         {
-            UIApplication.shared.openURL(whatsAppURL! as URL)
+            UIApplication.shared.open(whatsAppURL! as URL)
             result(SUCCESS);
         }
         else
@@ -321,11 +293,15 @@ public class ShareUtil{
     
     func shareToFacebookPost(args : [String: Any?],result: @escaping FlutterResult, delegate: SharingDelegate) {
         let message = args[self.argMessage] as? String
-        let imagePath = args[self.argImagePath] as? String
+        let imagePaths = args[self.argImagePaths] as? [String]
         
-        let photo = SharePhoto(image: UIImage.init(contentsOfFile: imagePath!)!, isUserGenerated: true)
         let content = SharePhotoContent()
-        content.photos = [photo]
+        var photos : [SharePhoto] = []
+        for image in imagePaths! {
+            let photo = SharePhoto(image: UIImage.init(contentsOfFile: image)!, isUserGenerated: true)
+            photos.append(photo)
+        }
+        content.photos = photos
         content.hashtag = Hashtag(message!)
         let dialog = ShareDialog(
             viewController: UIApplication.shared.windows.first!.rootViewController,
@@ -361,7 +337,7 @@ public class ShareUtil{
             let tgUrl = URL.init(string: urlString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!)
             
             if UIApplication.shared.canOpenURL(tgUrl!) {
-                UIApplication.shared.openURL(tgUrl!)
+                UIApplication.shared.open(tgUrl!)
                 result(SUCCESS)
             } else {
                 result(ERROR_APP_NOT_AVAILABLE)
@@ -492,7 +468,7 @@ public class ShareUtil{
     
     func shareToTwitter(args : [String: Any?],result: @escaping FlutterResult) {
         let title = args[self.argMessage] as? String
-        let image = args[self.argImagePath] as? String
+        let images = args[self.argImagePaths] as? [String]
         if(!canOpenUrl(appName: "twitter")){
             result(ERROR_APP_NOT_AVAILABLE)
             return
@@ -500,9 +476,13 @@ public class ShareUtil{
         
         
         let composeCtl = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
-        composeCtl?.add(URL(string: title!))
-        if(!(image==nil)){
-            composeCtl?.add(UIImage.init(contentsOfFile: image!))
+        if #unavailable(iOS 16) {
+            composeCtl?.add(URL(string: title!))
+        }
+        if(!(images==nil)){
+            for image in images! {
+                composeCtl?.add(UIImage.init(contentsOfFile: image))
+            }
         }
         composeCtl?.setInitialText(title!)
         UIApplication.topViewController()?.present(composeCtl!,animated:true,completion:nil);
@@ -566,6 +546,47 @@ public class ShareUtil{
         
     }
     
+    
+    public func shareImageToWhatsApp(args : [String: Any?],result: @escaping FlutterResult, delegate: SharingDelegate) {
+      let imagePath = args[self.argImagePath] as? String
+
+      guard let url = URL(string: imagePath!) else {
+        result(FlutterError(code: "INVALID_PATH", message: "The image path is invalid", details: nil))
+        return
+      }
+      
+      guard let image = UIImage(contentsOfFile: url.path) else {
+        result(FlutterError(code: "IMAGE_ERROR", message: "Could not load image", details: nil))
+        return
+      }
+    
+    
+        let urlWhats = "whatsapp://app"
+        if let urlString = urlWhats.addingPercentEncoding(withAllowedCharacters:CharacterSet.urlQueryAllowed) {
+            if let whatsappURL = URL(string: urlString) {
+
+                if UIApplication.shared.canOpenURL(whatsappURL as URL) {
+
+                        if let imageData = image.jpegData(compressionQuality: 1.0) {
+                            let tempFile = URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Documents/whatsAppTmp.wai")
+                            do {
+                                try imageData.write(to: tempFile, options: .atomic)
+                                let documentInteractionController = UIDocumentInteractionController(url: tempFile)
+                                documentInteractionController.uti = "net.whatsapp.image"
+                                documentInteractionController.presentOpenInMenu(from: CGRect.zero, in: UIApplication.topViewController()!.view, animated: true)
+
+                            } catch {
+                                print(error)
+                            }
+                        }
+                    
+
+                } else {
+                   print("Cannot open whatsapp")
+                }
+            }
+        }
+    }
     
 }
 
