@@ -34,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _videoPlayerController2,
       _videoPlayerController3;
 
-  late CustomVideoPlayerController _customVideoPlayerController;
+  late CustomCachedVideoPlayerController _customVideoPlayerController;
   late CustomVideoPlayerWebController _customVideoPlayerWebController;
 
   final CustomVideoPlayerSettings _customVideoPlayerSettings =
@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     )..initialize().then((value) => setState(() {}));
     _videoPlayerController2 = CachedVideoPlayerController.network(video240);
     _videoPlayerController3 = CachedVideoPlayerController.network(video480);
-    _customVideoPlayerController = CustomVideoPlayerController(
+    _customVideoPlayerController = CustomCachedVideoPlayerController(
       context: context,
       videoPlayerController: _videoPlayerController,
       customVideoPlayerSettings: _customVideoPlayerSettings,

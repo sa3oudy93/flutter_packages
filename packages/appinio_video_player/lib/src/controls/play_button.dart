@@ -2,7 +2,7 @@ import 'package:appinio_video_player/src/custom_video_player_controller.dart';
 import 'package:flutter/cupertino.dart';
 
 class CustomVideoPlayerPlayPauseButton extends StatelessWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final Function fadeOutOnPlay;
   const CustomVideoPlayerPlayPauseButton({
     Key? key,

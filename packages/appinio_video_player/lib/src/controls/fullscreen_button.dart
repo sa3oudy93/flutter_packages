@@ -2,7 +2,7 @@ import 'package:appinio_video_player/src/custom_video_player_controller.dart';
 import 'package:flutter/cupertino.dart';
 
 class CustomVideoPlayerFullscreenButton extends StatelessWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final bool? isFullscreen;
   const CustomVideoPlayerFullscreenButton({
     Key? key,

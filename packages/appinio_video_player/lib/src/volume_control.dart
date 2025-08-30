@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class VolumeControls extends StatefulWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
 
   const VolumeControls({
     Key? key,

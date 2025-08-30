@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class CustomVideoPlayerSeeker extends StatefulWidget {
   final Widget child;
-  final CustomVideoPlayerController customvVideoPlayerController;
+  final CustomCachedVideoPlayerController customvVideoPlayerController;
   const CustomVideoPlayerSeeker({
     Key? key,
     required this.child,

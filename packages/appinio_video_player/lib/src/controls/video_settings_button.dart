@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class VideoSettingsButton extends StatelessWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final Function updateVideoState;
   const VideoSettingsButton({
     Key? key,

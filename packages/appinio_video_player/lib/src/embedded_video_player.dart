@@ -4,10 +4,9 @@ import 'package:appinio_video_player/src/seek_buttons.dart';
 import 'package:appinio_video_player/src/thumbnail.dart';
 import 'package:appinio_video_player/src/volume_control.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cached_video_player/cached_video_player.dart';
 
 class EmbeddedVideoPlayer extends StatefulWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final bool isFullscreen;
 
   const EmbeddedVideoPlayer({

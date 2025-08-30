@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:appinio_video_player/appinio_video_player.dart';
 
 class VideoSettingsDialog extends StatelessWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final Function updateViewOnClose;
   const VideoSettingsDialog({
     Key? key,

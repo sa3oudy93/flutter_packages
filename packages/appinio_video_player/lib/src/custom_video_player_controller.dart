@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:appinio_video_player/src/fullscreen_video_player.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +9,7 @@ import 'package:video_player/video_player.dart';
 
 /// The extension on the class is able to call private methods
 /// only the package can use these methods and not the public beacuse of the hide keyword in the package exports
-extension ProtectedCustomVideoPlayerController on CustomVideoPlayerController {
+extension ProtectedCustomCachedVideoPlayerController on CustomCachedVideoPlayerController {
   Future<void> Function(String) get switchVideoSource => _switchVideoSource;
 
   ValueNotifier<Duration> get videoProgressNotifier => _videoProgressNotifier;
@@ -23,14 +24,14 @@ extension ProtectedCustomVideoPlayerController on CustomVideoPlayerController {
       _updateViewAfterFullscreen = updateViewAfterFullscreen;
 }
 
-class CustomVideoPlayerController {
+class CustomCachedVideoPlayerController {
   double _lastVolume = 0.5;
 
   Duration get getPosition => videoPlayerController.value.position;
   final BuildContext context;
-  VideoPlayerController videoPlayerController;
+  CachedVideoPlayerController videoPlayerController;
   final CustomVideoPlayerSettings customVideoPlayerSettings;
-  final Map<String, VideoPlayerController>? additionalVideoSources;
+  final Map<String, CachedVideoPlayerController>? additionalVideoSources;
   final ValueNotifier<bool> areControlsVisible = ValueNotifier<bool>(true);
 
   Future<void> switchSource(String sourceKey) async {
@@ -39,7 +40,7 @@ class CustomVideoPlayerController {
     switchVideoSource(sourceKey);
   }
 
-  CustomVideoPlayerController({
+  CustomCachedVideoPlayerController({
     required this.context,
     required this.videoPlayerController,
     this.customVideoPlayerSettings = const CustomVideoPlayerSettings(),
@@ -142,7 +143,7 @@ class CustomVideoPlayerController {
   }
 
   Future<void> _switchVideoSource(String selectedSource) async {
-    VideoPlayerController? newSource =
+    CachedVideoPlayerController? newSource =
         additionalVideoSources![selectedSource];
     if (newSource != null) {
       Duration _playedDuration = videoPlayerController.value.position;
@@ -255,7 +256,7 @@ class CustomVideoPlayerController {
     videoPlayerController.dispose();
     if (additionalVideoSources != null) {
       if (additionalVideoSources!.isNotEmpty) {
-        for (MapEntry<String, VideoPlayerController> videoSource
+        for (MapEntry<String, CachedVideoPlayerController> videoSource
             in additionalVideoSources!.entries) {
           videoSource.value.dispose();
         }

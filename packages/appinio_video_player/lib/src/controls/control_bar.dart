@@ -7,7 +7,7 @@ import 'package:appinio_video_player/src/controls/progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 
 class CustomVideoPlayerControlBar extends StatelessWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final Function updateVideoState;
   final Function fadeOutOnPlay;
   const CustomVideoPlayerControlBar({

@@ -5,7 +5,7 @@ import 'package:appinio_video_player/src/controls/seeker.dart';
 import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayerProgressBar extends StatefulWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
 
   const CustomVideoPlayerProgressBar({
     Key? key,

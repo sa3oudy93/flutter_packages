@@ -4,7 +4,7 @@ import 'package:flutter/scheduler.dart';
 
 class CustomVideoPlayerProgressIndicator extends StatefulWidget {
   final double progress;
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final Color progressColor;
   final Color backgroundColor;
 

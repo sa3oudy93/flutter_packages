@@ -2,7 +2,7 @@ import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:flutter/material.dart';
 
 class SeekButtons extends StatefulWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
 
   const SeekButtons({Key? key, required this.customVideoPlayerController})
       : super(key: key);

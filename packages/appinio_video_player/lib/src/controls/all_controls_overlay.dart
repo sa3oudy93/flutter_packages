@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:appinio_video_player/src/controls/control_bar.dart';
 
 class AllControlsOverlay extends StatefulWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   final Function updateVideoState;
   const AllControlsOverlay({
     Key? key,

@@ -3,7 +3,7 @@ import 'package:appinio_video_player/src/embedded_video_player.dart';
 import 'package:flutter/material.dart';
 
 class CustomVideoPlayer extends StatelessWidget {
-  final CustomVideoPlayerController customVideoPlayerController;
+  final CustomCachedVideoPlayerController customVideoPlayerController;
   const CustomVideoPlayer({
     Key? key,
     required this.customVideoPlayerController,
